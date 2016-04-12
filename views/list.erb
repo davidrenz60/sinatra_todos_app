@@ -10,7 +10,7 @@
 			<li><a class="edit" href="/lists/<%= @list_id %>/edit">Edit Lists</a></li>
 		</ul>
 	</header>
-	<ul>
+  <ul>
 		<% sort_todos(@list[:todos]) do |todo, index| %>
 			<% if todo[:completed] %>
 				<li class="complete">
