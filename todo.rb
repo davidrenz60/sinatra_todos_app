@@ -6,7 +6,7 @@ require "sinatra/content_for"
 configure do
   enable :sessions
   set :session_secret, 'secret'
-  set :erb, :escape_html => true
+  set :erb, escape_html: true
 end
 
 helpers do
@@ -134,8 +134,12 @@ end
 post "/lists/:id/destroy" do
   id = params[:id].to_i
   session[:lists].delete_at(id)
-  session[:success] = "The list has been deleted"
-  redirect "/lists"
+  if env["HTTP_X_REQUESTED_WITH"] == "XMLHttpRequest"
+    "/lists"
+  else
+    session[:success] = "The list has been deleted"
+    redirect "/lists"
+  end
 end
 
 # add a new todo to a list
@@ -163,8 +167,13 @@ post "/lists/:list_id/todos/:id/destroy" do
 
   todo_id = params[:id].to_i
   @list[:todos].delete_at(todo_id)
-  session[:success] = "The todo was deleted."
-  redirect "/lists/#{@list_id}"
+
+  if env["HTTP_X_REQUESTED_WITH"] == "XMLHttpRequest"
+    status 204
+  else
+    session[:success] = "The todo was deleted."
+    redirect "/lists/#{@list_id}"
+  end
 end
 
 # update the todo status
